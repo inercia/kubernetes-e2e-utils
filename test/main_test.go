@@ -3,6 +3,8 @@ package test
 import (
 	"flag"
 	"os"
+	"path"
+	"runtime"
 	"testing"
 
 	"k8s.io/klog/v2"
@@ -29,7 +31,11 @@ func TestMain(m *testing.M) {
 
 	namespace := envconf.RandomName("e2e", 16)
 
+	_, filename, _, _ := runtime.Caller(1)
+	currDir := path.Dir(filename)
+
 	testenv.Setup(
+		lenvfuncs.BuildDockerImage(path.Join(currDir, "test-image"), "Dockerfile", []string{"user/my-image:latest"}),
 		lenvfuncs.CreateK3dCluster(clusterName),
 		envfuncs.CreateNamespace(namespace),
 	)
