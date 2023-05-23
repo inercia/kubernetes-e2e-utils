@@ -20,7 +20,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
@@ -51,19 +50,16 @@ func (k *Cluster) WithVersion(ver string) *Cluster {
 func (k *Cluster) getKubeconfig() (string, error) {
 	kubecfg := fmt.Sprintf("%s-kubecfg", k.name)
 
-	p := k.e.StartProc(fmt.Sprintf(`k3d kubeconfig get %s`, k.name))
+	p := k.e.RunProc(fmt.Sprintf(`k3d kubeconfig get %s`, k.name))
 	if p.Err() != nil {
 		return "", fmt.Errorf("k3d kubeconfig get: %w", p.Err())
 	}
 	var stdout bytes.Buffer
-	if _, err := stdout.ReadFrom(p.StdOut()); err != nil {
+	if _, err := stdout.ReadFrom(p.Out()); err != nil {
 		return "", fmt.Errorf("k3d kubeconfig stdout bytes: %w", err)
 	}
-	if p.Wait().Err() != nil {
-		return "", fmt.Errorf("k3d get kubeconfig: %s: %w", p.Result(), p.Err())
-	}
 
-	file, err := ioutil.TempFile("", fmt.Sprintf("k3d-cluser-%s", kubecfg))
+	file, err := os.CreateTemp("", fmt.Sprintf("k3d-cluser-%s", kubecfg))
 	if err != nil {
 		return "", fmt.Errorf("k3d kubeconfig file: %w", err)
 	}
@@ -278,10 +274,12 @@ func (k *Cluster) installK3dWithGo(e *gexe.Echo) error {
 
 // LoadDockerImage loads a docker image from the host into the k3d cluster
 func (k *Cluster) LoadDockerImage(image string) error {
+	log.V(4).Infof("Loading image %q in %q", image, k.name)
 	p := k.e.RunProc(fmt.Sprintf(`k3d image import --cluster %s %s`, k.name, image))
 	if p.Err() != nil {
 		return fmt.Errorf("k3d: load docker image failed: %s: %s", p.Err(), p.Result())
 	}
+	log.V(4).Info("... image loaded")
 	return nil
 }
 
