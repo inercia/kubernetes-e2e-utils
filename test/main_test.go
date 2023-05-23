@@ -37,6 +37,7 @@ func TestMain(m *testing.M) {
 	testenv.Setup(
 		lenvfuncs.BuildDockerImage(path.Join(currDir, "test-image"), "Dockerfile", []string{"user/my-image:latest"}),
 		lenvfuncs.CreateK3dCluster(clusterName),
+		lenvfuncs.LoadDockerImageToCluster(clusterName, "user/my-image:latest"),
 		envfuncs.CreateNamespace(namespace),
 	)
 

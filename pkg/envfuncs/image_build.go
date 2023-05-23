@@ -41,7 +41,6 @@ type ErrorDetail struct {
 
 // BuildDockerImage returns an env.Func that is used for
 // building a docker image.
-//
 func BuildDockerImage(path string, dockerfile string, tags []string) env.Func {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
 		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())

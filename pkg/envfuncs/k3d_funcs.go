@@ -34,7 +34,6 @@ type k3dContextKey string
 //
 // NOTE: the returned function will update its env config with the
 // kubeconfig file for the config client.
-//
 func CreateK3dCluster(clusterName string) env.Func {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
 		k := k3d.NewCluster(clusterName)
@@ -57,7 +56,6 @@ func CreateK3dCluster(clusterName string) env.Func {
 //
 // NOTE: the returned function will update its env config with the
 // kubeconfig file for the config client.
-//
 func CreateK3dClusterWithConfig(clusterName, image, configFilePath string) env.Func {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
 		k := k3d.NewCluster(clusterName)
@@ -78,7 +76,6 @@ func CreateK3dClusterWithConfig(clusterName, image, configFilePath string) env.F
 // retrieves a previously saved k3d Cluster in the context (using the name), then deletes it.
 //
 // NOTE: this should be used in a Environment.Finish step.
-//
 func DestroyK3dCluster(name string) env.Func {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
 		clusterVal := ctx.Value(k3dContextKey(name))
@@ -102,7 +99,6 @@ func DestroyK3dCluster(name string) env.Func {
 // LoadDockerImageToCluster returns an EnvFunc that
 // retrieves a previously saved k3d Cluster in the context (using the name), and then loads a docker image
 // from the host into the cluster.
-//
 func LoadDockerImageToCluster(name, image string) env.Func {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
 		clusterVal := ctx.Value(k3dContextKey(name))
@@ -126,7 +122,6 @@ func LoadDockerImageToCluster(name, image string) env.Func {
 // LoadImageArchiveToCluster returns an EnvFunc that
 // retrieves a previously saved k3d Cluster in the context (using the name), and then loads a docker image TAR archive
 // from the host into the cluster.
-//
 func LoadImageArchiveToCluster(name, imageArchive string) env.Func {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
 		clusterVal := ctx.Value(k3dContextKey(name))
